@@ -20,7 +20,6 @@
 8. Script to create the csv file with required number of entries, Run the below script in google colab
 7. Python code:
 
-=========================== PYTHON CODE ========================================================
 import pandas as pd
 import random
 from datetime import datetime, timedelta
@@ -32,31 +31,24 @@ def generate_random_string(length):
     # Generate a random string of specified length from uppercase and lowercase letters and digits
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
-
-
-# Sample lists to generate random values
 shippers = ['VWX Logistics', 'ABC Shipping', 'XYZ Freight', 'PQR Transport']
 transporters = ['YZA Express', 'LMN Haulage', 'QRS Movers', 'DEF Logistics']
 vehicle_types = ['Truck', 'Train', 'Ship', 'Plane']
 sources = ['Dublin', 'London', 'Paris', 'Berlin', 'Madrid', 'Rome']
 destinations = ['Madrid', 'London', 'Paris', 'Berlin', 'Rome', 'New York']
 
-# Function to generate a random date between two dates
 def random_date(start_date, end_date):
     time_delta = end_date - start_date
     random_days = random.randint(0, time_delta.days)
     return start_date + timedelta(days=random_days)
 
-# Function to generate random data for each row
 def generate_random_row():
-    # Randomly select values from the lists
     shipper = random.choice(shippers)
     transporter = random.choice(transporters)
     vehicle_type = random.choice(vehicle_types)
     source = random.choice(sources)
     destination = random.choice(destinations)
 
-    # Generate random validFrom and validTo dates
     valid_from_date = datetime.strptime('2024-04-25', '%Y-%m-%d')
     valid_to_date = datetime.strptime('2026-12-10', '%Y-%m-%d')
     valid_from = random_date(valid_from_date, valid_to_date)
@@ -73,15 +65,10 @@ def generate_random_row():
         'destination': destination
     }
 
-# Generate 500,000 rows of unique data
 data = [generate_random_row() for _ in range(500000)]
 
-# Convert the list of dictionaries to a pandas DataFrame
 df = pd.DataFrame(data)
 
-# Save the DataFrame to a CSV file
 df.to_csv('/content/contracts_data_100000_rows.csv', index=False)
 
 print("CSV file 'generated_data.csv' has been created with 500,000 unique rows.")
-
-======================================================================================================
