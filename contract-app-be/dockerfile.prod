@@ -1,0 +1,25 @@
+FROM node:18-alpine as build
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci
+RUN npm i typescript
+
+COPY . .
+
+RUN npm run build
+
+RUN npm cache clean --force
+
+FROM node:18-alpine as production
+
+WORKDIR /app
+
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
+COPY package*.json ./
+
+EXPOSE 8089
+CMD ["node", "app/dist/server.js"]

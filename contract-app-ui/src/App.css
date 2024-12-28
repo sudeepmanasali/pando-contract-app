@@ -1,0 +1,156 @@
+.contract-app {
+  width: 90%;
+  margin: auto;
+  background-color: #FFFFFF;
+}
+.add-contract {
+  padding: 8px 20px;
+  background-color: #5D60EF;
+  border: none;
+  outline: none;
+  border-radius: 5px;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+}
+
+/* contract form modal  */
+
+.contract-form-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10);
+  z-index: 100;
+}
+
+.contract-form {
+  background-color: white;
+  padding: 16px 20px;
+  border-radius: 10px;
+  width: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.contract-form > .header {
+  width: 100%;
+  padding: 20px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header > .title {
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.close {
+  font-size: 20px;
+  cursor: pointer;
+}
+.input-box {
+  width: 100%;
+  padding: 10px 0;
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+}
+
+.input-box > input, .input-box > select {
+  min-width: 200px;
+  padding: 5px 10px;
+  outline: none;
+  border-radius: 5px;
+  border: 1px solid gray;
+}
+
+.submit, .upload-btn {
+  width: 30%;
+  padding: 10px;
+  border: none;
+  background-color: #5D60EF;
+  border-radius: 5px;
+  margin: 20px;
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.upload-btn {
+  padding: 5px 20px;
+
+}
+
+table {
+  border-collapse: collapse;
+}
+
+thead tr th {
+  padding:8px;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  background-color: #ffec98;
+  width: 100%;
+}
+
+.action-box {
+  width: 100%;
+  display: flex;
+  margin: 20px 0px;
+  gap: 20px;
+}
+
+.table-footer {
+  border-top: 1px solid black;
+  padding: 20px 0;
+}
+
+.table-count .title {
+  font-weight: bold;
+}
+
+tbody tr td {
+  font-size: 14px;
+  padding: 8px;
+  
+  border: 1px solid #ddd;
+}
+
+.status-text{
+  padding: 10px;
+  text-align: center;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #FFF;
+  border-bottom-color: #5D60EF;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+  }
+
+  @keyframes rotation {
+  0% {
+      transform: rotate(0deg);
+  }
+  100% {
+      transform: rotate(360deg);
+  }
+  } 

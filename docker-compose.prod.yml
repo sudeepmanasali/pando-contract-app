@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+  # Nginx for (Backend) service
+  nginx:
+    image: nginx:latest
+    container_name: nginx-proxy
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "8089:8089"
+    depends_on:
+      - backend
+    networks:
+      - contract-app-network
+
+  # Node.js (Backend) service
+  backend:
+    build:
+      context: ./contract-app-be
+      dockerfile: dockerfile.prod
+    working_dir: /app
+    environment:
+      - NODE_ENV=development
+      - MONGODBURL=mongodb://mongodb:27017/test
+      - REDIS=redis
+      - REDIS_PORT=6379
+    command: ["node", "dist/server.js"]
+    depends_on:
+      - redis
+      - mongodb
+    expose:
+      - "8089"
+    deploy:
+      replicas: 1
+    networks:
+      - contract-app-network
+
+  # React (Frontend) service
+  frontend:
+    build:
+      context: ./contract-app-ui
+      dockerfile: dockerfile.prod
+    ports:
+      - "80:80"
+    networks:
+      - contract-app-network
+
+  # Mongo db database
+  mongodb:
+    image: mongo
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: on-failure
+    networks:
+      - contract-app-network
+
+  # Redis database
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: on-failure
+    networks:
+      - contract-app-network
+
+  # Worker instance to save data
+  dataworker:
+    build:
+      context: ./worker
+      dockerfile: dockerfile.prod
+    environment:
+      - MONGODBURL=mongodb://mongodb:27017/test
+      - REDIS=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - mongodb
+      - redis
+    restart: on-failure
+    scale: 5
+    networks:
+      - contract-app-network
+
+networks:
+  contract-app-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
