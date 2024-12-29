@@ -91,7 +91,7 @@ const UploadContractFile = ({ onClose, getPaginationData }) => {
             disabled={uploading}
             className="upload-btn"
           >
-            {uploading ? "Uploainf..." : "Upload CSV"}
+            {uploading ? "Uploaing..." : "Upload CSV"}
           </button>
         )}
 
