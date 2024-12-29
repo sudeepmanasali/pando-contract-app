@@ -49,7 +49,7 @@ class Worker {
         logger.info("Connected to Redis");
         resolve(true);
       } catch (err) {
-        logger.error("Unlable to connect redis client", err);
+        logger.error("Unable to connect redis client", err);
         reject(false);
       }
     });
@@ -131,7 +131,7 @@ class Worker {
           !contract.source ||
           !contract.destination
         ) {
-          logger.info(`Skipping contract with missing fields: ${contract._id}`);
+          logger.info(`Skipping contract with missing fields`);
           missingValueCount++;
           continue;
         }
@@ -186,7 +186,7 @@ class Worker {
         logger.info("No valid contracts to insert.");
       }
     } catch (error) {
-      logger.error("Error validating and inserting contracts:", error);
+      logger.error("Error in validating and inserting contracts:", error);
     }
   }
 
@@ -211,7 +211,7 @@ class Worker {
       await RedisManager.redisClient.quit();
 
       logger.info(
-        "Worker instance has been shut down successfully, and all connections are released"
+        "Worker instance has been shut down successfully and all resource connections are released"
       );
       process.exit(0);
     } catch (error) {

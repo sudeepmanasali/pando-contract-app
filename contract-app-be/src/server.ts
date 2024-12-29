@@ -97,7 +97,7 @@ class App {
       await RedisManager.redisClient.quit();
 
       logger.info(
-        "Application has been shut down successfully, and all connections are released"
+        "Application has been shut down successfully and all resource connections are released"
       );
       process.exit(0);
     } catch (error) {

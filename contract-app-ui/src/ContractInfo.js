@@ -1,7 +1,11 @@
 import React from "react";
 
-const ContractsTable = ({getPaginationData, contracts, isLoading, noMoreData}) => {
-
+const ContractsTable = ({
+  getPaginationData,
+  contracts,
+  isLoading,
+  noMoreData,
+}) => {
   const tableRef = React.createRef();
 
   const loadContracts = () => {
@@ -28,9 +32,9 @@ const ContractsTable = ({getPaginationData, contracts, isLoading, noMoreData}) =
   ];
 
   return (
-    <div>
+    <div className="contract-info-container">
       <div
-        style={{ width: "100%", height: "700px", overflowY: "auto" }}
+        className="scrollable-container"
         ref={tableRef}
         onScroll={loadContracts}
       >

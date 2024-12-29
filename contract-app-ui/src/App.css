@@ -14,8 +14,6 @@
   cursor: pointer;
 }
 
-/* contract form modal  */
-
 .contract-form-modal-backdrop {
   position: fixed;
   top: 0;
@@ -87,7 +85,16 @@
 
 .upload-btn {
   padding: 5px 20px;
+}
 
+.contract-info-container {
+  height: 75vh;
+}
+
+.scrollable-container {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
 }
 
 table {
@@ -154,3 +161,9 @@ tbody tr td {
       transform: rotate(360deg);
   }
   } 
+
+  @media screen and (max-width: 756px) {
+    .contract-form{
+      width: 80%;
+    }
+  }

@@ -80,7 +80,7 @@ export default class RedisManager {
     return RedisManager._redisClient;
   }
 
-  static async addJob(requestId: string, summary: Summary) {
+  static async addJob(requestId: string, summary: Summary): Promise<void> {
     try {
       await RedisManager._redisClient.set(requestId, JSON.stringify(summary));
     } catch (error) {

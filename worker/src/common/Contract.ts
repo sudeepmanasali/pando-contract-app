@@ -60,7 +60,7 @@ CONTRACT_SCHEMA.index({
   transporter: 1,
   source: 1,
   destination: 1,
-  vehcleType: 1
+  vehicleType: 1
 });
 
 module.exports = mongoose.model("Contract", CONTRACT_SCHEMA);

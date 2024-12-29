@@ -10,8 +10,6 @@ import RedisManager from "./redisManager";
 import CSVFileProcessor from "./upload-csv-file";
 import fs from "fs";
 
-
-
 describe("CSVFileProcessor", () => {
   let processor: CSVFileProcessor;
 

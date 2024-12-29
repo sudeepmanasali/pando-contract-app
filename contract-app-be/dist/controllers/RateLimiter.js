@@ -47,4 +47,3 @@ class RateLimiter {
     }
 }
 exports.RateLimiter = RateLimiter;
-RateLimiter.REQUEST_KEY = 1;

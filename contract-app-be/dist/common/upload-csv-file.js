@@ -20,9 +20,9 @@ const redisManager_1 = __importDefault(require("./redisManager"));
 const crypto_1 = __importDefault(require("crypto"));
 const Logger_1 = __importDefault(require("./Logger"));
 dotenv_1.default.config();
-let logger = Logger_1.default.getLogger("CSVFileProcessor");
 class CSVFileProcessor {
     constructor(requestId) {
+        this.logger = Logger_1.default.getLogger("CSVFileProcessor");
         this.chunkSize = 2000;
         this.dataChunk = [];
         this.currentRow = 0;
@@ -49,7 +49,7 @@ class CSVFileProcessor {
             })
                 .on("end", () => this.jobCompletionStatus(resolve, reject))
                 .on("error", (error) => {
-                logger.error("Error in processing and saving the csv file data to database", error);
+                this.logger.error("Error in processing and saving the csv file data to database", error);
                 reject(error);
             });
         });
@@ -75,12 +75,12 @@ class CSVFileProcessor {
                 let pendingJobs = yield this.checkJobStatuses();
                 let summary = yield this.getRequestSummary();
                 yield this.removeJobIdFromRedis();
-                logger.info(`success: ${summary === null || summary === void 0 ? void 0 : summary.success}, failed: ${summary === null || summary === void 0 ? void 0 : summary.failed}, overlaps: ${summary === null || summary === void 0 ? void 0 : summary.overLappingCount}, 
+                this.logger.info(`success: ${summary === null || summary === void 0 ? void 0 : summary.success}, failed: ${summary === null || summary === void 0 ? void 0 : summary.failed}, overlaps: ${summary === null || summary === void 0 ? void 0 : summary.overLappingCount}, 
         missing fields: ${summary === null || summary === void 0 ? void 0 : summary.missingValueCount}, pending : ${pendingJobs.length}`);
                 resolve(Object.assign(Object.assign({}, summary), { pending: pendingJobs.length }));
             }
             catch (err) {
-                logger.error(`Failed to check the csv data`, err);
+                this.logger.error(`Failed to check the csv data`, err);
                 reject({
                     success: 0,
                     failed: 0,
@@ -105,10 +105,10 @@ class CSVFileProcessor {
             try {
                 yield Promise.all(this.jobIds.map((jobId) => redisManager_1.default.removeJob(jobId)));
                 yield Promise.all(this.jobIds.map((jobId) => redisManager_1.default.removeJob(jobId.split("-").reverse().join("-"))));
-                logger.info("Removed all jobs from redis successfully");
+                this.logger.info("Removed all jobs from redis successfully");
             }
             catch (error) {
-                logger.error("Error while removing the jobs from redis", error);
+                this.logger.error("Error while removing the jobs from redis", error);
                 throw new Error("Failed to check job statuses");
             }
         });
@@ -128,10 +128,10 @@ class CSVFileProcessor {
                     return [];
                 }
                 retry++;
-                logger.warn(`Retry to check job status ${retry} / ${maxRetries}`);
-                yield this.delay(3000);
+                this.logger.warn(`Retry to check job status ${retry} / ${maxRetries}`);
+                yield this.delay(2000);
             }
-            logger.warn(`Retry limit reached ${maxRetries}. Some jobs may still be pending`);
+            this.logger.warn(`Retry limit reached ${maxRetries}. Some jobs may still be pending`);
             return jobs;
         });
     }
@@ -146,13 +146,13 @@ class CSVFileProcessor {
                             success: report.success + obj.success,
                             failed: report.failed + obj.failed,
                             missingValueCount: report.missingValueCount + obj.missingValueCount,
-                            overLappingCount: report.overLappingCount + obj.overLappingCount,
+                            overLappingCount: report.overLappingCount + obj.overLappingCount
                         }
                         : Object.assign({}, report);
                 }, { success: 0, failed: 0, missingValueCount: 0, overLappingCount: 0 });
             }
             catch (error) {
-                logger.error("cannot generate the summary,", error);
+                this.logger.error("cannot generate the summary,", error);
                 return {
                     success: 0,
                     failed: 0,
@@ -165,9 +165,9 @@ class CSVFileProcessor {
     deleteCSVFile(filePath) {
         fs_1.default.unlink(filePath, (err) => {
             if (err)
-                logger.error("Failed to delete the file ", err.message);
+                this.logger.error("Failed to delete the file ", err.message);
             else {
-                logger.info("Successfully deleted the file ", filePath);
+                this.logger.info("Successfully deleted the file ", filePath);
             }
         });
     }

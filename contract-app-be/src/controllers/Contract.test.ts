@@ -5,13 +5,13 @@ jest.mock("../common/upload-csv-file");
 
 describe("createContractsFromCSVFile", () => {
   const mockRequest = {
-    file: { path: 'test.csv' },
+    file: { path: "test.csv" },
   };
 
   const mockResponse = () => {
     let res = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis()
+      json: jest.fn().mockReturnThis(),
     };
     return res;
   };
@@ -20,16 +20,26 @@ describe("createContractsFromCSVFile", () => {
   let mockSummary: any;
 
   beforeEach(() => {
-    mockSummary = { success: 10, failed: 0, overLappingCount: 0, missingValueCount: 0 };
+    mockSummary = {
+      success: 10,
+      failed: 0,
+      overLappingCount: 0,
+      missingValueCount: 0,
+    };
   });
 
   it("should process the CSV file and return a success summary", async () => {
     const req = mockRequest;
     const res = {
       status: jest.fn().mockReturnThis(),
-      json: jest.fn().mockReturnThis()
-    };;
-    const mockSummary = { success: 10, failed: 2, missingValueCount: 1, overLappingCount: 0 };
+      json: jest.fn().mockReturnThis(),
+    };
+    const mockSummary = {
+      success: 10,
+      failed: 2,
+      missingValueCount: 1,
+      overLappingCount: 0,
+    };
 
     (CSVFileProcessor as jest.Mock).mockImplementation(() => ({
       processCsvFile: jest.fn().mockResolvedValue(mockSummary),

@@ -51,17 +51,18 @@ const UploadContractFile = ({ onClose, getPaginationData }) => {
         alert(
           `Success: ${success}, Failed: ${failed}, Over lapping: ${overLappingCount}, Missing Fields: ${missingValueCount}, Pending: ${pending}`
         );
-      } 
+      };
       getPaginationData();
       onClose();
     } catch (error) {
-      if(error.status === 429){
-        alert("Too many requests to /csv-upload, please try again after 10seconds.");
+      if (error.status === 429) {
+        alert(
+          error.response.data.message
+        );
       } else {
-        alert("something went wrong...!");
+        alert(error.message);
         console.error(error);
       }
-
     } finally {
       setUploading(false);
       onClose();
@@ -103,7 +104,7 @@ const UploadContractFile = ({ onClose, getPaginationData }) => {
           </div>
         )}
 
-{progress === 100 && <span class="loader"></span>}
+        {progress === 100 && <span className="loader"></span>}
         {progress === 100 && (
           <div>
             The CSV file has been uploaded and is currently being processed.

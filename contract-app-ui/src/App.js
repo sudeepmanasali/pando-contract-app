@@ -10,9 +10,10 @@ const offset = 50;
 
 let handleError = (error) => {
   let response = error.response;
-  let message = (response.data.message || 'Something went wrong');
+  let message = response.data.message || "Something went wrong";
   alert(message);
-}
+};
+
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [openFileUploadModal, setOpenFileUploadModal] = useState(false);
@@ -65,10 +66,9 @@ function App() {
       setContractsData([...contracts, response.data]);
       alert("Contract added successfully");
     } catch (error) {
-      console.error(error);
+      handleError(error);
     }
   };
-
 
   return (
     <div className="contract-app">
@@ -102,7 +102,10 @@ function App() {
       {isModalOpen &&
         ReactDOM.createPortal(
           openFileUploadModal ? (
-            <UploadContractFile onClose={handleCloseModal}       getPaginationData={getPaginationData}/>
+            <UploadContractFile
+              onClose={handleCloseModal}
+              getPaginationData={getPaginationData}
+            />
           ) : (
             <ContractForm
               onClose={handleCloseModal}
