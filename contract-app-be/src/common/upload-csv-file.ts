@@ -10,8 +10,6 @@ import { JOB_STATUSES } from "./constants";
 
 dotenv.config();
 
-let logger = AppLogger.getLogger("CSVFileProcessor");
-
 interface Summary {
   success: number;
   failed: number;
@@ -21,7 +19,8 @@ interface Summary {
 }
 
 export default class CSVFileProcessor {
-  private readonly chunkSize = 2000;
+  logger = AppLogger.getLogger("CSVFileProcessor");
+  chunkSize = 2000;
   dataChunk: Job[] = [];
   currentRow = 0;
   processedRows = new Set<number>();
@@ -47,7 +46,7 @@ export default class CSVFileProcessor {
         })
         .on("end", () => this.jobCompletionStatus(resolve, reject))
         .on("error", (error) => {
-          logger.error(
+          this.logger.error(
             "Error in processing and saving the csv file data to database",
             error
           );
@@ -62,7 +61,6 @@ export default class CSVFileProcessor {
     }
     this.processedRows.add(this.currentRow);
     this.currentRow++;
-
     this.dataChunk.push(row);
 
     if (this.dataChunk.length >= this.chunkSize) {
@@ -85,11 +83,11 @@ export default class CSVFileProcessor {
       let summary = await this.getRequestSummary();
       await this.removeJobIdFromRedis();
 
-      logger.info(`success: ${summary?.success}, failed: ${summary?.failed}, overlaps: ${summary?.overLappingCount}, 
+      this.logger.info(`success: ${summary?.success}, failed: ${summary?.failed}, overlaps: ${summary?.overLappingCount}, 
         missing fields: ${summary?.missingValueCount}, pending : ${pendingJobs.length}`);
       resolve({ ...summary, pending: pendingJobs.length });
     } catch (err) {
-      logger.error(`Failed to check the csv data`, err);
+      this.logger.error(`Failed to check the csv data`, err);
       reject({
         success: 0,
         failed: 0,
@@ -124,9 +122,9 @@ export default class CSVFileProcessor {
           RedisManager.removeJob(jobId.split("-").reverse().join("-"))
         )
       );
-      logger.info("Removed all jobs from redis successfully");
+      this.logger.info("Removed all jobs from redis successfully");
     } catch (error) {
-      logger.error("Error while removing the jobs from redis", error);
+      this.logger.error("Error while removing the jobs from redis", error);
       throw new Error("Failed to check job statuses");
     }
   }
@@ -155,10 +153,10 @@ export default class CSVFileProcessor {
       }
 
       retry++;
-      logger.warn(`Retry to check job status ${retry} / ${maxRetries}`);
-      await this.delay(3000);
+      this.logger.warn(`Retry to check job status ${retry} / ${maxRetries}`);
+      await this.delay(2000);
     }
-    logger.warn(`Retry limit reached ${maxRetries}. Some jobs may still be pending`);
+    this.logger.warn(`Retry limit reached ${maxRetries}. Some jobs may still be pending`);
     return jobs;
   }
 
@@ -178,17 +176,15 @@ export default class CSVFileProcessor {
             ? {
               success: report.success + obj.success,
               failed: report.failed + obj.failed,
-              missingValueCount:
-                report.missingValueCount + obj.missingValueCount,
-              overLappingCount:
-                report.overLappingCount + obj.overLappingCount,
+              missingValueCount: report.missingValueCount + obj.missingValueCount,
+              overLappingCount: report.overLappingCount + obj.overLappingCount
             }
             : { ...report };
         },
         { success: 0, failed: 0, missingValueCount: 0, overLappingCount: 0 }
       );
     } catch (error) {
-      logger.error("cannot generate the summary,", error);
+      this.logger.error("cannot generate the summary,", error);
       return {
         success: 0,
         failed: 0,
@@ -200,9 +196,9 @@ export default class CSVFileProcessor {
 
   private deleteCSVFile(filePath: string): void {
     fs.unlink(filePath, (err) => {
-      if (err) logger.error("Failed to delete the file ", err.message);
+      if (err) this.logger.error("Failed to delete the file ", err.message);
       else {
-        logger.info("Successfully deleted the file ", filePath);
+        this.logger.info("Successfully deleted the file ", filePath);
       }
     });
   }
