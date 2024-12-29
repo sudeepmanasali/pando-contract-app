@@ -4,6 +4,9 @@
 
 **Technologies:** Redis, Bull queue and Redis, Docker, Docker Compose, NGINX
 
+**System Design Data Flow**
+![image](https://github.com/user-attachments/assets/943315d7-4bb4-4194-98b9-6751614cd909)
+
 **Steps to run**
 
 1. To create and run whole application in dev mode
@@ -24,7 +27,6 @@
 9. To recreate the specific service image
    - docker-compose up --build <service-name> 
 10. Script to create the csv file with required number of entries, Run create-csv.py file script in google colab
-    
 11. **Demo**: https://github.com/user-attachments/assets/b5d23b64-97d0-4002-a984-06162301bf16
 
 Creating the environment files in respective apps, and change it as per your convenience
