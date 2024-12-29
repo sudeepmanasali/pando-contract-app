@@ -2,16 +2,12 @@ import { API_REQUEST_ROUTES } from "../common/constants";
 import RedisManager from "../common/redisManager";
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 
-
-
 export class RateLimiter {
-
-  private static readonly REQUEST_KEY = 1;
   private static rateLimiter: RateLimiterRedis;
 
   constructor() { }
 
-  static init() {
+  static init(): void {
     RateLimiter.rateLimiter = new RateLimiterRedis({
       storeClient: RedisManager.redisClient,
       points: 1,
@@ -21,7 +17,7 @@ export class RateLimiter {
   }
 
 
-  static async rateLimiterMiddleware(req: any, res: any, next: any) {
+  static async rateLimiterMiddleware(req: any, res: any, next: any): Promise<void> {
     let url = req.originalUrl, ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
     if (url === API_REQUEST_ROUTES.UPLOAD_CONTRACT_FILE) {
