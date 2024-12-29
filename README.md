@@ -1,5 +1,11 @@
 # pando-contract-app
 
+# Tech Stack: 
+  MERN
+# Technologies: 
+  Redis, Bull queue and Redis, Docker, Docker Compose, NGINX
+
+# Steps to run
 1. To create and run whole application in dev mode
    - docker compose -f docker-compose.dev.yml up --build
 2. To create containers and run whole application in production mode
@@ -12,9 +18,11 @@
    - dev: 3000
    - prod: 80
 6. Backend app runs at 8089
-7. Backend app uses nginx in prod and listens at 8089
+7. Backend app uses nginx in prod env and listens at 8089
 8. To restart single service
    - docker-compose restart <service-name1> <service-name2>
 9. To recreate the specific service image
    - docker-compose up --build <service-name> 
-10. Script to create the csv file with required number of entries, Run create-csv script in google colab
+10. Script to create the csv file with required number of entries, Run create-csv.py file script in google colab
+    
+11. **Demo**: https://github.com/user-attachments/assets/b5d23b64-97d0-4002-a984-06162301bf16
