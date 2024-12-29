@@ -30,8 +30,8 @@
 Creating the environment files in respective apps, and change it as per your convenience
 
 **Backend App Env variables**
-   - MONGODBURL=mongodb://mongodb:27017/test (mongodb://<service-name or mongodbhostname>:<port-no>/<dbname>)
-   - REDIS=redis (Redis hostname, <service-name>)
+   - MONGODBURL=mongodb://mongodb:27017/test (mongodb://service-name or mongodbhostname:port-no/dbname)
+   - REDIS=redis (redis hostname or service name)
    - REDIS_PORT=6379
 
 **Frontend App Env variables**
