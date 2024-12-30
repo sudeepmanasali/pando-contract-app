@@ -45,11 +45,11 @@ const UploadContractFile = ({ onClose, getPaginationData }) => {
       });
 
       if (response.status === 200) {
-        let { success, failed, overLappingCount, missingValueCount, pending } =
+        let { success, failed, invalidInput, missingValueCount, pending } =
           response.data;
         alert("data updated successfully,");
         alert(
-          `Success: ${success}, Failed: ${failed}, Over lapping: ${overLappingCount}, Missing Fields: ${missingValueCount}, Pending: ${pending}`
+          `Success: ${success}, Failed: ${failed}, Invalid input: ${invalidInput}, Missing Fields: ${missingValueCount}, Pending: ${pending}`
         );
       };
       getPaginationData();

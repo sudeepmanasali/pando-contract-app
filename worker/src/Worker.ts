@@ -116,8 +116,7 @@ class Worker {
 
   private async validateAndInsertContracts(contracts: Contract[], jobId: JobId): Promise<void> {
     const validContracts = [];
-    let overLappingCount = 0,
-      missingValueCount = 0;
+    let invalidInput = 0, missingValueCount = 0;
     try {
       for (let i = 0; i < contracts.length; i++) {
         const contract = contracts[i];
@@ -133,6 +132,13 @@ class Worker {
         ) {
           logger.info(`Skipping contract with missing fields`);
           missingValueCount++;
+          continue;
+        }
+
+        let currentTime = new Date();
+        let validToDate = new Date(contract.validTo);
+        if (validToDate < currentTime) {
+          invalidInput++;
           continue;
         }
 
@@ -155,7 +161,7 @@ class Worker {
         });
 
         if (overlappingContracts.length > 0) {
-          overLappingCount++;
+          invalidInput++;
           logger.info(
             `Overlap found for contract: ${overlappingContracts[0]._id}`
           );
@@ -170,7 +176,7 @@ class Worker {
         RedisManager.addJob(jobId.toString().split("-").reverse().join("-"), {
           success: validContracts.length,
           failed: contracts.length - validContracts.length,
-          overLappingCount,
+          invalidInput,
           missingValueCount,
         });
         logger.info(
@@ -180,7 +186,7 @@ class Worker {
         RedisManager.addJob(jobId.toString().split("-").reverse().join("-"), {
           success: 0,
           failed: contracts.length - validContracts.length,
-          overLappingCount,
+          invalidInput,
           missingValueCount,
         });
         logger.info("No valid contracts to insert.");

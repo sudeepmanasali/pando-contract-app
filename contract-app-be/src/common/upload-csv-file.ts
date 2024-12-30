@@ -13,7 +13,7 @@ dotenv.config();
 interface Summary {
   success: number;
   failed: number;
-  overLappingCount: number;
+  invalidInput: number;
   missingValueCount: number;
   pending?: number;
 }
@@ -83,7 +83,7 @@ export default class CSVFileProcessor {
       let summary = await this.getRequestSummary();
       await this.removeJobIdFromRedis(pendingJobs);
 
-      this.logger.info(`success: ${summary?.success}, failed: ${summary?.failed}, overlaps: ${summary?.overLappingCount}, 
+      this.logger.info(`success: ${summary?.success}, failed: ${summary?.failed}, overlaps: ${summary?.invalidInput}, 
         missing fields: ${summary?.missingValueCount}, pending : ${this.currentRow - (summary.failed + summary.success)}`);
       resolve({ ...summary, pending: this.currentRow - (summary.failed + summary.success) });
     } catch (err) {
@@ -91,7 +91,7 @@ export default class CSVFileProcessor {
       reject({
         success: 0,
         failed: 0,
-        overLappingCount: 0,
+        invalidInput: 0,
         pending: this.jobIds.length,
         missingValueCount: 0,
       });
@@ -181,11 +181,11 @@ export default class CSVFileProcessor {
               success: report.success + obj.success,
               failed: report.failed + obj.failed,
               missingValueCount: report.missingValueCount + obj.missingValueCount,
-              overLappingCount: report.overLappingCount + obj.overLappingCount
+              invalidInput: report.invalidInput + obj.invalidInput
             }
             : { ...report };
         },
-        { success: 0, failed: 0, missingValueCount: 0, overLappingCount: 0 }
+        { success: 0, failed: 0, missingValueCount: 0, invalidInput: 0 }
       );
     } catch (error) {
       this.logger.error("cannot generate the summary,", error);
@@ -193,7 +193,7 @@ export default class CSVFileProcessor {
         success: 0,
         failed: 0,
         missingValueCount: 0,
-        overLappingCount: 0,
+        invalidInput: 0,
       };
     }
   }

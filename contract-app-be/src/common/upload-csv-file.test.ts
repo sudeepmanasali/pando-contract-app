@@ -109,7 +109,7 @@ describe("CSVFileProcessor", () => {
         JSON.stringify({
           success: 1,
           failed: 2,
-          overLappingCount: 0,
+          invalidInput: 0,
           missingValueCount: 0,
         })
       )
@@ -120,7 +120,7 @@ describe("CSVFileProcessor", () => {
     expect(response).toEqual({
       success: 2,
       failed: 4,
-      overLappingCount: 0,
+      invalidInput: 0,
       missingValueCount: 0,
     });
   });
@@ -134,7 +134,7 @@ describe("CSVFileProcessor", () => {
     expect(response).toEqual({
       success: 0,
       failed: 0,
-      overLappingCount: 0,
+      invalidInput: 0,
       missingValueCount: 0,
     });
   });

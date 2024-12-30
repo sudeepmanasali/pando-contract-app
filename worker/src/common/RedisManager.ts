@@ -8,7 +8,7 @@ interface Summary {
   success: number,
   failed: number,
   missingValueCount: number,
-  overLappingCount: number
+  invalidInput: number
 }
 
 const enum REDIS_STATUS {

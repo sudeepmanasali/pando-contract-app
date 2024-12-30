@@ -48,8 +48,6 @@ CONTRACT_SCHEMA.pre("insertMany", function (next, records) {
       contract.contractType = "Current Contract";
     } else if (validFrom > today) {
       contract.contractType = "Future Contract";
-    } else {
-      contract.contractType = "Expired Contract";
     }
   });
   next();

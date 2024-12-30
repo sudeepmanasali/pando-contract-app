@@ -39,7 +39,13 @@ export const createContract = async (req: any, res: any) => {
           validTo: { $lte: contract.validTo },
         },
       ],
-    })
+    });
+
+    let currentTime = new Date();
+    let validToDate = new Date(contract.validTo);
+    if (validToDate < currentTime) {
+      res.status(400).json({ message: "Invalid date input" });
+    }
 
     if (contractFromDb.length === 0) {
       let response = await contract.save();

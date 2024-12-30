@@ -7,7 +7,7 @@
 status counts: 
 success : Number of records saved into database
 failed : Number of records not saved into database
-overLappingCount & failedCount : Indicatesthe reason why the records were not saved into database
+invalidInput & failedCount : Indicates the reason why the records were not saved into database (overlapping, invalid date)
 
 **System Design Data Flow**
 ![image](https://github.com/user-attachments/assets/943315d7-4bb4-4194-98b9-6751614cd909)

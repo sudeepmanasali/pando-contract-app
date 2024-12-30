@@ -23,7 +23,7 @@ describe("createContractsFromCSVFile", () => {
     mockSummary = {
       success: 10,
       failed: 0,
-      overLappingCount: 0,
+      invalidInput: 0,
       missingValueCount: 0,
     };
   });
@@ -38,7 +38,7 @@ describe("createContractsFromCSVFile", () => {
       success: 10,
       failed: 2,
       missingValueCount: 1,
-      overLappingCount: 0,
+      invalidInput: 0,
     };
 
     (CSVFileProcessor as jest.Mock).mockImplementation(() => ({

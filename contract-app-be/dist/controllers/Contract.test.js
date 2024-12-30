@@ -29,7 +29,7 @@ describe("createContractsFromCSVFile", () => {
     const mockNext = jest.fn();
     let mockSummary;
     beforeEach(() => {
-        mockSummary = { success: 10, failed: 0, overLappingCount: 0, missingValueCount: 0 };
+        mockSummary = { success: 10, failed: 0, invalidInput: 0, missingValueCount: 0 };
     });
     it("should process the CSV file and return a success summary", () => __awaiter(void 0, void 0, void 0, function* () {
         const req = mockRequest;
@@ -38,7 +38,7 @@ describe("createContractsFromCSVFile", () => {
             json: jest.fn().mockReturnThis()
         };
         ;
-        const mockSummary = { success: 10, failed: 2, missingValueCount: 1, overLappingCount: 0 };
+        const mockSummary = { success: 10, failed: 2, missingValueCount: 1, invalidInput: 0 };
         upload_csv_file_1.default.mockImplementation(() => ({
             processCsvFile: jest.fn().mockResolvedValue(mockSummary),
         }));
