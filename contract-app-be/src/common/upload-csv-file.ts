@@ -81,11 +81,11 @@ export default class CSVFileProcessor {
 
       let pendingJobs = await this.checkJobStatuses();
       let summary = await this.getRequestSummary();
-      await this.removeJobIdFromRedis();
+      await this.removeJobIdFromRedis(pendingJobs);
 
       this.logger.info(`success: ${summary?.success}, failed: ${summary?.failed}, overlaps: ${summary?.overLappingCount}, 
-        missing fields: ${summary?.missingValueCount}, pending : ${pendingJobs.length}`);
-      resolve({ ...summary, pending: pendingJobs.length });
+        missing fields: ${summary?.missingValueCount}, pending : ${this.currentRow - (summary.failed + summary.success)}`);
+      resolve({ ...summary, pending: this.currentRow - (summary.failed + summary.success) });
     } catch (err) {
       this.logger.error(`Failed to check the csv data`, err);
       reject({
@@ -112,13 +112,17 @@ export default class CSVFileProcessor {
     this.dataChunk = [];
   }
 
-  private async removeJobIdFromRedis(): Promise<void> {
+  private async removeJobIdFromRedis(pendingJobIds: string[]): Promise<void> {
     try {
+
+      let jobsToBeRemoved = this.jobIds.filter(jobId => {
+        return !pendingJobIds.includes(jobId);
+      });
       await Promise.all(
-        this.jobIds.map((jobId) => RedisManager.removeJob(jobId))
+        jobsToBeRemoved.map((jobId) => RedisManager.removeJob(jobId))
       );
       await Promise.all(
-        this.jobIds.map((jobId) =>
+        jobsToBeRemoved.map((jobId) =>
           RedisManager.removeJob(jobId.split("-").reverse().join("-"))
         )
       );

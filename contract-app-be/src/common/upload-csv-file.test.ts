@@ -83,7 +83,7 @@ describe("CSVFileProcessor", () => {
     (RedisManager.removeJob as jest.Mock).mockReturnValue(
       Promise.resolve("OK")
     );
-    await processor["removeJobIdFromRedis"]();
+    await processor["removeJobIdFromRedis"]([]);
 
     expect(RedisManager.removeJob).toHaveBeenCalledWith("requestId123-1234");
     expect(RedisManager.removeJob).toHaveBeenCalledWith("1234-requestId123");
@@ -96,7 +96,7 @@ describe("CSVFileProcessor", () => {
     );
 
     try {
-      await processor["removeJobIdFromRedis"]();
+      await processor["removeJobIdFromRedis"]([]);
     } catch (error) {
       expect(RedisManager.removeJob).toHaveBeenCalledTimes(1);
     }
