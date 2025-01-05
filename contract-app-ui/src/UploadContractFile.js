@@ -1,19 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import toast from 'react-hot-toast';
 
 let progressLine = {
-  height: "5px",
   backgroundColor: "green",
   color: "white",
   padding: "2px",
   textAlign: "right",
-  borderRadius: "5px",
+  borderRadius: "10px",
+  fontSize: "10px",
+  paddingRight: "10px",
+  height: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'right'
 };
 
 const UploadContractFile = ({ onClose, getPaginationData }) => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [progressInterval, setProgressInterval] = useState(null);
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -31,50 +38,75 @@ const UploadContractFile = ({ onClose, getPaginationData }) => {
     setUploading(true);
     setProgress(0);
 
-    try {
-      const apiUrl = process.env.BACKEND_API_URL || "http://localhost:8089";
-      const response = await axios.post(`${apiUrl}/csv-upload`, formData, {
+    const apiUrl = process.env.BACKEND_API_URL || "http://localhost:8089";
+    const progressId = Date.now() + file.name;
+
+    axios.post(`${apiUrl}/csv-upload?progressId=${progressId}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-        },
-        onUploadProgress: (progressEvent) => {
-          const { loaded, total } = progressEvent;
-          const percent = Math.floor((loaded / total) * 100);
-          setProgress(percent);
-        },
+        }
+      })
+      .then((response) => {
+        setProgress(100);
+        if (response.status === 200) {
+          clearInterval(progressInterval);
+
+          let { success, failed, invalidInput, missingValueCount, pending } =
+            response.data;
+          toast.success(
+            `Success: ${success}, Failed: ${failed}, Invalid input: ${invalidInput}, Missing Fields: ${missingValueCount}, Pending: ${pending}`, {duration: 10000}
+          );
+          getPaginationData();
+          onClose();
+        }
+      })
+      .catch((error) => {
+        if (error.status === 429) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error(error.message);
+          console.error(error);
+        }
+      })
+      .finally(() => {
+        setUploading(false);
+        onClose();
       });
 
-      if (response.status === 200) {
-        let { success, failed, invalidInput, missingValueCount, pending } =
-          response.data;
-        alert("data updated successfully,");
-        alert(
-          `Success: ${success}, Failed: ${failed}, Invalid input: ${invalidInput}, Missing Fields: ${missingValueCount}, Pending: ${pending}`
-        );
-      };
-      getPaginationData();
-      onClose();
-    } catch (error) {
-      if (error.status === 429) {
-        alert(
-          error.response.data.message
-        );
-      } else {
-        alert(error.message);
-        console.error(error);
-      }
-    } finally {
-      setUploading(false);
-      onClose();
-    }
+    getProgress(progressId);
   };
+
+  const getProgress = (pid) => {
+    let progressInterval = setInterval(async () => {
+      const apiUrl = process.env.BACKEND_API_URL || "http://localhost:8089";
+      axios
+        .get(`${apiUrl}/contract-progress?progressId=${pid}`)
+        .then((response) => {
+          setProgress(Math.floor(response.data.progress * 100));
+        })
+        .catch((error) => {
+          toast.error(error.message);
+          console.error(error);
+        });
+    }, 1500);
+
+    setProgressInterval(progressInterval);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
+    };
+  }, [progressInterval]);
 
   return (
     <div className="contract-form-modal-backdrop">
       <div className="contract-form">
         <div className="header">
           <h2> Contract File Upload form</h2>
-          <button className="close" onClick={onClose} disabled={uploading}>
+          <button className="close" onClick={onClose} disabled={uploading} style={{background: uploading ? '#6e6f77': '#5D60EF' }}>
             X
           </button>
         </div>
@@ -92,19 +124,20 @@ const UploadContractFile = ({ onClose, getPaginationData }) => {
             disabled={uploading}
             className="upload-btn"
           >
-            {uploading ? "Uploaing..." : "Upload CSV"}
+            {uploading ? "Processing..." : "Upload CSV 🗂️"}
           </button>
         )}
 
         {uploading && progress !== 100 && (
           <div style={{ width: "100%" }}>
             <div style={{ backgroundColor: "#DCFCE7", borderRadius: "10px" }}>
-              <div style={{ ...progressLine, width: `${progress}%` }}></div>
+              <div style={{ ...progressLine, width: `${progress}%`, color:'white' }}>
+                {  !!progress && <div>{progress} %</div>}
+              </div>
             </div>
           </div>
         )}
 
-        {progress === 100 && <span className="loader"></span>}
         {progress === 100 && (
           <div>
             The CSV file has been uploaded and is currently being processed.

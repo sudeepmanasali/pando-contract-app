@@ -3,7 +3,8 @@ export const enum API_REQUEST_ROUTES {
   CREATE_CONTRACT = '/save-contract',
   GET_CONTRACTS = '/all-contracts',
   GET_CONTRACTS_COUNT = '/contracts-count',
-  GET_CONTRACTS_PAGE_DATA = '/contracts-page-data'
+  GET_CONTRACTS_PAGE_DATA = '/contracts-page-data',
+  GET_PROGRESS = '/contract-progress'
 }
 
 export const enum JOB_STATUSES {
@@ -23,7 +24,6 @@ export const enum REDIS_STATUS {
 export const enum REDIS_RESPONSE_CODE {
   OK = 'OK'
 }
-
 
 export const CSV_FILE_DIRECTORY = "csv-uploads";
 export const CSV_FILE_NAME = "csv-file";

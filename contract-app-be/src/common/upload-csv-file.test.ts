@@ -15,7 +15,7 @@ describe("CSVFileProcessor", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    processor = new CSVFileProcessor("requestId123");
+    processor = new CSVFileProcessor("requestId123", "hjhj");
     (mockStream.pipe as jest.Mock).mockReturnValue(mockStream);
     (mockStream.on as jest.Mock).mockImplementation((event: any, cb: any) => {
       cb("Error in processing and saving the csv file data to database");
@@ -37,7 +37,7 @@ describe("CSVFileProcessor", () => {
 
   it("should add row to dataChunk and add it to the queue", () => {
     jest.spyOn(processor as any, "generateRandomHexId").mockReturnValue("1234");
-    let requestId = processor.requestId;
+    let requestId = processor['requestId'];
     processor.chunkSize = 1;
     const mockRow = { id: 1 };
 

@@ -5,6 +5,7 @@ import ReactDOM from "react-dom";
 import React, { useState, useEffect } from "react";
 import UploadContractFile from "./UploadContractFile";
 import axios from "axios";
+import toast, { Toaster } from "react-hot-toast";
 
 const offset = 50;
 
@@ -35,7 +36,7 @@ function App() {
       const response = await axios.get(
         `${apiUrl}/contracts-page-data?page=${pageNumber}&offset=${offset}`
       );
-      if (response.data.length > 0) {
+      if (response?.data &&response.data.length > 0) {
         setContractsData([...contracts, ...response.data]);
         setPageNumber(pageNumber + 1);
       } else {
@@ -64,7 +65,7 @@ function App() {
       const apiUrl = process.env.BACKEND_API_URL || "http://localhost:8089";
       const response = await axios.post(`${apiUrl}/save-contract`, formValue);
       setContractsData([...contracts, response.data]);
-      alert("Contract added successfully");
+      toast.success("Contract added successfully");
     } catch (error) {
       handleError(error);
     }
@@ -114,6 +115,26 @@ function App() {
           ),
           document.body
         )}
+
+<Toaster
+        position="top-center"
+        containerStyle={{ margin: "8px" }}
+        toastOptions={{
+          success: {
+            duration: 3000,
+          },
+          error: {
+            duration: 3000,
+          },
+          style: {
+            fontSize: "16px",
+            maxWidth: "500px",
+            padding: "4px 24px",
+            backgroundColor: "white",
+            color: "var(--color-grey-700)",
+          },
+        }}
+      />
     </div>
   );
 }

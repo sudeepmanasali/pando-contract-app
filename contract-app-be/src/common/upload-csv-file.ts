@@ -26,10 +26,8 @@ export default class CSVFileProcessor {
   processedRows = new Set<number>();
   jobIds: string[] = [];
   csvFilePath: string = "";
-  requestId: string;
 
-  constructor(requestId: string) {
-    this.requestId = requestId;
+  constructor(private requestId: string, private progressId: string) {
   }
 
   processCsvFile(filePath: string): Promise<Summary> {
@@ -151,6 +149,9 @@ export default class CSVFileProcessor {
           status === JOB_STATUSES.COMPLETED || status === JOB_STATUSES.FAILED
         );
       });
+
+      let progress = (this.jobIds.length - jobs.length) / this.jobIds.length
+      await RedisManager.redisClient.set(this.progressId, progress);
 
       if (allJobsProcessed) {
         return [];

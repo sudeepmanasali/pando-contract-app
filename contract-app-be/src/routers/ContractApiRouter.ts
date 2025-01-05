@@ -1,6 +1,6 @@
 import express, { Router } from 'express';
 import { API_REQUEST_ROUTES, CSV_FILE_DIRECTORY, CSV_FILE_NAME } from '../common/constants';
-import { createContract, createContractsFromCSVFile, getAllContracts, getContractsDocumentCount, getContractsPagedata } from '../controllers/Contracts';
+import { createContract, createContractsFromCSVFile, getAllContracts, getContractProgress, getContractsDocumentCount, getContractsPagedata } from '../controllers/Contracts';
 import multer, { Multer } from "multer";
 import fs from 'fs';
 import AppLogger from '../common/Logger';
@@ -35,6 +35,9 @@ export default class ContractApiRouter {
 
     // get contracts based on pagenumber and number of rows
     this.contractApiRouter.get(API_REQUEST_ROUTES.GET_CONTRACTS_PAGE_DATA, getContractsPagedata);
+
+    // get progress of csv file procssing and saving
+    this.contractApiRouter.get(API_REQUEST_ROUTES.GET_PROGRESS, getContractProgress);
 
     return this.contractApiRouter;
   }

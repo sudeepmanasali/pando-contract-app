@@ -1,15 +1,19 @@
 import crypto from "crypto";
 import AppLogger from "../common/Logger";
 import CSVFileProcessor from "../common/upload-csv-file";
+import RedisManager from "../common/redisManager";
 
 const Contract = require("../models/Contract");
 
 let logger = AppLogger.getLogger("contract-controller");
 
 export const createContractsFromCSVFile = async (req: any, res: any, next: any) => {
-  let requestId = crypto.randomBytes(5).toString("hex");
+  let requestId = crypto.randomBytes(5).toString("hex"), progressId = req.query?.progressId;
+  // setting progress to zero
+  await RedisManager.redisClient.set(progressId, 0);
+
   try {
-    let csvFileProcessor = new CSVFileProcessor(requestId);
+    let csvFileProcessor = new CSVFileProcessor(requestId, progressId);
     let summary = await csvFileProcessor.processCsvFile(req.file.path)
     logger.info(`${summary.success} contracts created`);
     res.status(200).json(summary);
@@ -97,7 +101,18 @@ export const getContractsPagedata = async (req: any, res: any) => {
     let contracts = await Contract.find().skip(skipLines).limit(offset);
     res.status(200).json(contracts);
   } catch (error) {
-    logger.error("failed to retrive paginated data, ", error);
+    logger.error("Failed to retrive paginated data, ", error);
     res.status(400).json({ message: "failed to retrive paginated data,", error });
+  }
+};
+
+export const getContractProgress = async (req: any, res: any) => {
+  try {
+    let progressId = req.query.progressId;
+    let progress = await RedisManager.redisClient.get(progressId);
+    res.status(200).json({ progress: +(progress || 0) });
+  } catch (error) {
+    logger.error("Failed to retrive progress, ", error);
+    res.status(400).json({ message: "Failed to retrive progress", error, progress: 0 });
   }
 };
